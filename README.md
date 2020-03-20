@@ -1,6 +1,8 @@
 ---
-layout: page
-title: About
+layout: post
+title:  "尝试一下Jekyll"
+date:   2020-03-20 08:00:00 +0800
+categories: Jekyll
 ---
 
 ## 尝试一下Jekyll
