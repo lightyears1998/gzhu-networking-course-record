@@ -1,0 +1,71 @@
+---
+layout: post
+title:  "Task 1"
+date:   2020-03-21 08:00:00 +0800
+categories: jekyll update
+---
+
+## 安装H3C网络模拟器HCL
+
+🦌北鹿老师的指导意见是安装HCL v2.1.0，并配合VirtualBox 4使用，不要使用HCL安装程序自带的VirtualBox。
+
+安装目前最新的H3C模拟器HCL v2.1.1，该模拟环境需要配合VirtualBox使用。在Windows 10上运行时需要以Windows 7兼容模式运行。
+
+1. 最初尝试在VirtualBox 6的虚拟机上安装HCL和VirutalBox 6，模拟器可以正常运行。但无论宿主机嵌套AMD-vT与否，模拟器运行速度均过于缓慢，放弃。
+2. 配合VirutalBox 6使用，即使在Win 7兼容性模式下仍然不能正常启动模拟器。错误日志太少，无法判定原因。
+3. VirtualBox 5未测试。
+4. 配合VirutalBox 4使用，在Win 7兼容模式下模拟器运行成功，速度理想。
+
+## 预习常见命令（PPT第８章节）
+
+命令行是无缓冲的。
+
+- `Ctrl + W` 删除输入点左侧连续的字符。
+
+``` sh
+?
+display history-command
+quit
+system-view
+  interface
+  line
+  router
+  vlan
+  ...
+
+```
+
+## 进行小练习
+
+🦌老师布置的作业。
+
+```sh
+# 在用户视图、系统视图和接口视图之间切换
+system-view
+interface xxx  # 进入特定接口的视图
+quit
+return [OR] Ctrl + Z  # 从任何视图直接返回用户视图
+
+# 查看当前版本信息
+display version
+
+# 设置设备的名称为R1
+sysname R1
+
+# 设置欢迎信息“Hello, world.”
+header incoming %
+Hello, world!
+
+# 查看当前配置
+display current-configuration
+
+# 保存当前配置
+save
+
+```
+
+## 小结
+
+1. 勇于追新的同时保持对旧的软件的兼容。本次为了运行HCL卸载掉了v6版本而新安装了v4版本的VirtualBox，可见高版本并不是万灵药。
+2. 要保持软件环境整洁。
+3. 要听取前辈的指导。
