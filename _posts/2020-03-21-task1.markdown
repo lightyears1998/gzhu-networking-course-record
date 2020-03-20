@@ -32,7 +32,7 @@ system-view
   router
   vlan
   ...
-{% highlight shell %}
+{% endhighlight shell %}
 
 ## 进行小练习
 
