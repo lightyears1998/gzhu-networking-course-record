@@ -3,6 +3,8 @@ layout: page
 title: About
 ---
 
+## 尝试一下Jekyll
+
 上次尝试用静态博客框架Hexo做了[嵌入式系统与接口技术课程的课程记录](https://lightyears1998.github.io/gzhu-esit-course-record/)，这次就来尝试一下Jekyll吧。
 
 Jekyll没有对Windows平台下的官方支持，所以在Windows平台上使用的体验不是很好。`_posts`的默认后缀名是`.markdown`而不是`.md`耶，Jekyll应该是有一段历史的了。
