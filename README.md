@@ -1,8 +1,7 @@
 ---
-layout: post
+layout: page
 title:  "尝试一下Jekyll"
-date:   2020-03-20 08:00:00 +0800
-categories: Jekyll
+permlink: /about/
 ---
 
 ## 尝试一下Jekyll
@@ -11,7 +10,7 @@ categories: Jekyll
 
 Jekyll没有对Windows平台下的官方支持，所以在Windows平台上使用的体验不是很好。`_posts`的默认后缀名是`.markdown`而不是`.md`耶，Jekyll应该是有一段历史的了。
 
-另外，默认的语法高亮格式用{% templatetag openblock %} highlight lang {% templatetag closeblock %}和{% templatetag openblock %} endhighlight {% templatetag closeblock %}作为定界符，跟现在的流行格式也有很大不同。
+另外，除了Markdown里面默认的标记代码段的格式，语法高亮也可以使用Liquid tag。
 
 {% highlight ruby %}
 def print_hi(name)
