@@ -22,7 +22,7 @@ categories: [basic, router, shell]
 
 - `Ctrl + W` 删除输入点左侧连续的字符。
 
-``` sh
+{% highlight shell %}
 ?
 display history-command
 quit
@@ -32,8 +32,7 @@ system-view
   router
   vlan
   ...
-
-```
+{% highlight shell %}
 
 ## 进行小练习
 
@@ -61,7 +60,6 @@ display current-configuration
 
 # 保存当前配置
 save
-
 ```
 
 ## 小结
