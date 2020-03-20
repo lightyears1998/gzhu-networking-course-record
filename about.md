@@ -1,7 +1,6 @@
 ---
 layout: page
 title: About
-permalink: {{ "/about/" | escape }}
 ---
 
 上次尝试用静态博客框架Hexo做了[嵌入式系统与接口技术课程的课程记录](https://lightyears1998.github.io/gzhu-esit-course-record/)，这次就来尝试一下Jekyll吧。
