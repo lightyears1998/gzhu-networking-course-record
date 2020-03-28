@@ -1,0 +1,77 @@
+---
+layout: post
+title:  "Task 2: Telnet"
+date:   2020-03-28 17:00:00 +0800
+categories: [router, telnet]
+---
+
+🦌北鹿老师本周让我们玩一下Telnet。
+
+## 建立网络拓扑
+
+![网络拓扑](../images/task2.png)
+
+新建一个HCL项目，并建立图示的网络拓扑，为路由器分别取名Server、Router和Client，并逐个配置IP地址。
+并为在拓扑边缘的路由器配置静态路由。
+
+```sh
+# 进入SystemView并为设备命名
+system-view
+sysname <name>
+# ...
+
+# 配置静态IP
+interface g 0/0
+ip address 10.1.1.1 24
+# ...
+
+# 为“边缘”路由器配置静态默认路由
+# From 'Server'
+ip route-static 0.0.0.0 0 10.1.1.1
+# From 'Client'
+ip route-static 0.0.0.0 0 10.1.2.1
+
+# 测试🦌老师说的“三层连通性”
+# From 'Client' ping 'Server'
+ping 10.1.1.2
+
+save
+```
+
+需要注意的是，如果最后一步没有Ping通，则在确认配置无误的前提下可以Ping一下本地环回地址`ping 127.0.0.1`。
+如果本地环回地址都Ping不通则一定是HCL是出Bug了，可以保存项目后重新启动HCL。
+~~这Bug我还真遇到过。~~
+
+## 在Server上启动Telnet服务
+
+接下来开启Telnet，并尝试一下三种验证用户身份验证模式。
+
+```sh
+# SystemView of 'Server'
+telnet server enable
+
+# 无密码模式
+line vty 0 63
+authentication-mode none
+
+# 口令模式
+line vty 0 63
+authentication-mode password
+set authentication password simple <passphrase>
+
+# 无密码模式和口令模式下，可以设置从VTY登录的用户级别。
+# user-role level-15
+
+# 本地用户表模式
+local-user <usrname> class manage
+password simple <new-password>
+service-type telnet
+line vty 0 63
+authentication-mode schema
+```
+
+随后在拓扑中的任意路由器上用`telnet <IP>`命令并输入正确凭证就能远程登陆到Telnet服务器了。
+
+还可以创建多个用户。不同的用户可以从不同终端同时登录到路由器。
+
+以上。
