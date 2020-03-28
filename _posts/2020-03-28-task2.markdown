@@ -9,7 +9,7 @@ categories: [router, telnet]
 
 ## 建立网络拓扑
 
-![网络拓扑](/images/task2.png)
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task2.png)
 
 新建一个HCL项目，并建立图示的网络拓扑，为路由器分别取名Server、Router和Client，并逐个配置IP地址。
 并为在拓扑边缘的路由器配置静态路由。
