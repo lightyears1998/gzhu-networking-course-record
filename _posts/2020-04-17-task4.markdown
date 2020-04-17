@@ -1,0 +1,91 @@
+---
+layout: post
+title:  "Task 4: VLAN and Trunk"
+date:   2020-04-17 14:00:00 +0800
+categories: [switch, vlan, trunk, hybrid]
+---
+
+本周的重点还是交换机，🦌北鹿老师让我们做复杂一点的拓扑。
+
+## Trunk链路：跨交换机的VLAN通信
+
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task3-1.png)
+
+交换机之间的链路类型是Trunk类型。为了实现跨交换机的VLAN通信，除了配置好PC的静态IP地址之外，还需要在交换机上做出如下设定。
+
+```sh
+# SW1
+system-view
+vlan 10
+port ge 1/0/1
+vlan 20
+port ge 1/0/2
+int ge 1/0/23
+port link-type trunk
+port trunk pvid vlan 10
+port trunk permit vlan all
+```
+
+SW2的设置与SW1是一样的。可以通过在交换机上`display`来验证当前端口的设置：
+
+```sh
+system-view
+int ge 1/0/1
+disp this
+disp int ge 1/0/2
+disp int ge 1/0/23
+disp vlan
+disp vlan 10 # or 20
+```
+
+通过`Ping`来验证各个主机之间的连通性：
+
+```sh
+# From PC1
+ping 192.168.1.1 # 可通
+ping 192.168.1.2 # 可通
+ping 192.168.1.3 # 不通
+ping 192.168.1.3 # 不通
+```
+
+## Hybrid链路：VLAN间的通信
+
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task3-2.png)
+
+搭建拓扑之后，除了配置主机的静态IP地址，还需要对交换机SWA进行如下配置：
+
+```sh
+# SWA
+vlan 10
+port ge 1/0/1
+
+vlan 20
+port ge 1/0/2
+
+vlan 30
+port ge 1/0/3
+
+int ge 1/0/1
+port link-type hybrid
+port hybrid vlan 10 30 untagged
+
+int ge 1/0/2
+port link-type hybrid
+port hybrid vlan 20 30 untagged
+
+int ge 1/0/3
+port link-type hybrid
+port hybrid vlan 10 20 30 untagged
+```
+
+通过`ping`来检查连通性：
+
+```sh
+# From PC5
+ping 192.168.1.6 # 不通
+ping 192.168.1.7 # 可通
+
+# From PC7
+ping 192.168.1.5 # 可通
+ping 192.168.1.6 # 可通
+```
