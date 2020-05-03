@@ -10,7 +10,7 @@ categories: [switch, vlan, trunk, link aggression]
 
 ---
 
-![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task4.png)
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task5.png)
 
 除了配置好PC的静态IP地址之外，还需要在交换机上做出如下设定。以SW1为例：
 
