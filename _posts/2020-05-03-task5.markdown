@@ -1,0 +1,56 @@
+---
+layout: post
+title:  "Task 5: Link Aggregation"
+date:   2020-05-03 17:00:00 +0800
+categories: [switch, vlan, trunk, link aggression]
+---
+
+本周的重点还是交换机，🦌北鹿老师这次让我们做链路聚合。
+所谓链路聚合，就是用两台交换机之间用多条线缆连接，以达到拓宽带宽的目的。
+
+---
+
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task4.png)
+
+除了配置好PC的静态IP地址之外，还需要在交换机上做出如下设定。以SW1为例：
+
+```sh
+# SW1
+int ge 1/0/2
+stp edged-port
+
+vlan 10
+port ge 1/0/2
+
+int ge 1/0/1
+port link-type trunk
+port trunk permit vlan all
+
+int Bridge-Aggregation 1 # 先创建聚合组
+
+# 将端口分配到聚合组
+int ge 1/0/23
+port link-aggregation group 1
+int ge 1/0/24
+port link-aggregation group 1
+
+# 设置聚合组规则
+int Bridge 1
+port link-type trunk
+port trunk permit vlan all
+```
+
+SW2的配置类似于SW1；SW3则是配置两个Trunk口就好。
+
+可以使用的`disp this`、`disp vlan brief`、`disp Bridge-Aggregation verbose`等命令来查看设备上的设置。
+
+通过`Ping`来验证主机之间的连通性：
+
+```sh
+# From PC1
+ping 192.168.10.2 # 可通
+```
+
+---
+
+如果确认配置无问题但仍然无法ping通，可以在用户视图下尝试`restore factory-default`，或删除所有设备重连一次——这可能是由于HCL的bug或配置过程中的微小失误导致的。
