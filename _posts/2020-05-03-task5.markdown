@@ -42,6 +42,14 @@ port trunk permit vlan all
 
 SW2的配置类似于SW1；SW3则是配置两个Trunk口就好。
 
+不过，由于SW3上没有VLAN 10，即使设置允许`port trunk permit vlan 10`，虽然VLAN Permitting列表中会出现VLAN 10，但VLAN Passing列表中并不会有VLAN 10，实际上VLAN 10仍然无法通过。因此在SW3上需要手动创建一下VLAN 10。
+
+```sh
+#SW3
+vlan 10
+quit
+```
+
 可以使用的`disp this`、`disp vlan brief`、`disp Bridge-Aggregation verbose`等命令来查看设备上的设置。
 
 通过`Ping`来验证主机之间的连通性：
