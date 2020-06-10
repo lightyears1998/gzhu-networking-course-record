@@ -9,7 +9,7 @@ categories: [switch, vlan, trunk, hybrid]
 
 ## Trunk链路：跨交换机的VLAN通信
 
-![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task3-1.png)
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task4-1.png)
 
 交换机之间的链路类型是Trunk类型。为了实现跨交换机的VLAN通信，除了配置好PC的静态IP地址之外，还需要在交换机上做出如下设定。
 
@@ -50,7 +50,7 @@ ping 192.168.1.3 # 不通
 
 ## Hybrid链路：VLAN间的通信
 
-![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task3-2.png)
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task4-2.png)
 
 搭建拓扑之后，除了配置主机的静态IP地址，还需要对交换机SWA进行如下配置：
 
