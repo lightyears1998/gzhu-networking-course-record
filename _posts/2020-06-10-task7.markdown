@@ -1,0 +1,147 @@
+---
+layout: post
+title:  "Task 7: OSPF 和 RIP"
+date:   2020-06-10 15:00:00 +0800
+categories: [router, switch, osfp, rip]
+---
+
+本周的重点终于到了路由协议，🦌北鹿老师这次下令我们做 OSFP 和 RIP。
+
+按照在模拟上做实验的内容看，H3C 的交换机的功能跟路由器有得一拼。
+果然网络核心的硬件会“颠覆”普通用户的一些认知。
+
+---
+
+## 开放式最短路径优先协议 Open Shortest Path First, OSPF
+
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task7-1.png)
+
+这是我们的第一个使用路由器的实验。在路由器上的配置命令如下：
+
+``` shell
+# RT1
+sys
+sysname RT1
+
+ospf 1 router-id 1.1.1.1
+area 0
+network 192.168.1.1 0.0.0.0
+network 10.1.1.1 0.0.0.0
+
+int loopback 0
+ip addr 192.168.1.1 255.255.255.255
+
+int ge 0/0
+ip addr 10.1.1.1 255.255.255.0
+
+# RT2
+sys
+sysname RT2
+
+ospf 2
+area 0
+network 10.1.1.2 0.0.0.0
+area 1
+network 20.1.1.1 0.0.0.0
+
+int loopback 1
+ip addr 2.2.2.2 255.255.255.255
+
+int ge 0/0
+ip addr 10.1.1.2
+int ge 0/1
+ip addr 20.1.1.1
+
+# RT3
+sys
+sysname RT3
+
+ospf 3 router-id 3.3.3.3
+area 1
+network 192.168.3.1 0.0.0.0
+network 20.1.1.2 0.0.0.0
+
+int loopback 0
+ip addr 192.168.3.1 255.255.255.255
+
+int ge 0/1
+ip addr 20.1.1.2 255.255.255.0
+```
+
+可以使用 `disp ospf routing` 命令来查看设备上的设置。
+
+通过 Ping 来验证路由器之间的连通性，由于使用了 loopback 接口，在使用 `ping` 命令时候需要指定源 IP：
+
+``` shell
+# From RT1
+ping -a 192.168.1.1 192.168.3.1 # 可通
+```
+
+## 路由信息协议 Routing Infomation Protocol, RIP
+
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task7-2.png)
+
+在交换机上的配置命令如下：
+
+``` shell
+# SW1
+sys
+sysname SW1
+
+int ge 1/0/1
+port link-mode route
+ip addr 30.1.1.1 24
+
+int loopback 1
+ip addr 172.16.1.1 32
+
+rip
+version 2
+undo summary
+network 30.1.1.0
+network 172.16.1.1
+
+# SW2
+sys
+sysname SW2
+
+int ge 1/0/1
+port link-mode route
+ip addr 30.1.1.2 24
+
+int ge 1/0/2
+port link-mode route
+ip addr 40.1.1.1 24
+
+rip
+version 2
+undo summary
+network 30.1.1.0
+network 40.1.1.0
+
+# SW3
+sys
+sysname SW3
+
+int ge 1/0/2
+port link-mode route
+ip addr 40.1.1.2 24
+
+int loopback 1
+ip addr 192.168.2.1 32
+
+rip
+version 2
+undo summary
+network 192.168.2.1
+network 40.1.1.0
+```
+
+可以使用 `disp ip routing-table` 命令来查看设备上的设置。
+
+通过 Ping 来验证交换机之间的连通性，由于使用了 loopback 接口，在使用 `ping` 命令时候需要指定源 IP：
+
+``` shell
+# From SW1
+ping -a 172.16.1.1 192.168.2.1
+```
