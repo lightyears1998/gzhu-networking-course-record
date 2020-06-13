@@ -93,4 +93,4 @@ telnet 20.1.1.2
 
 虽然手册的说法是路由器的 DHCP 服务是默认开启的，但 dhcpserver 的 `dhcp enable` 这条指令在我的 HCL 模拟器里面是不能省略的。一旦省略这句 enable，DHCP 服务就不会正常工作。
 
-顺带一提，如果运行 DHCP 服务的路由器上的某一个接口使用了 DHCP 地址池上的 IP（例如本实验中的 dhcpserver 的 GE 0/0 接口），那么这时不需要使用 `fdhcp server forbidden-ip` 指令，也不需要在对应地址池下使用 `forbidden-ip` 指令：已经分配给路由器接口的 IP 地址不会分配给其他 DHCP Client。
+顺带一提，如果运行 DHCP 服务的路由器上的某一个接口使用了 DHCP 地址池上的 IP（例如本实验中的 dhcpserver 的 GE 0/0 接口），那么这时不需要使用 `dhcp server forbidden-ip` 指令，也不需要在对应地址池下使用 `forbidden-ip` 指令：已经分配给路由器接口的 IP 地址不会分配给其他 DHCP Client。
