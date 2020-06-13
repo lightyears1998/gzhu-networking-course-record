@@ -1,0 +1,96 @@
+---
+layout: post
+title:  "Task 8: DHCP 与 ACL"
+date:   2020-06-13 12:00:00 +0800
+categories: [router, dhcp, acl]
+---
+
+终于轮到 DHCP 和 ACL 这俩路由器的特长啦，🦌北鹿老师这次让我们做 DHCP 和 ACL。
+
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task8.png)
+
+``` shell
+# dhcpserver
+sys
+sysname dhcpserver
+
+acl advanced 3000
+rule 0 deny tcp source 192.168.1.0 0.0.0.255 destination 20.1.1.2 0.0.0.0 destination-port eq telnet
+
+int ge 0/0
+ip addr 192.168.1.254 24
+packet-filter 3000 inbound
+
+int ge 0/1
+ip addr 10.1.1.1 24
+
+dhcp enable
+dhcp server ip-pool pc
+network 192.168.1.0 24
+gateway-list 192.168.1.254
+
+ospf
+area 0
+network 10.1.1.1 0.0.0.0
+area 192.168.1.0
+network 192.168.1.0 0.0.0.255
+```
+
+``` shell
+# R1
+sys
+sysname R1
+
+int ge 0/1
+ip addr 10.1.1.2 24
+
+int ge 0/0
+ip addr 20.1.1.1 24
+
+ospf
+area 0
+network 10.1.1.2 0.0.0.0
+network 20.1.1.1 0.0.0.0
+```
+
+``` shell
+# telnetserver
+sys
+sysname telnetserver
+
+int ge 0/0
+ip addr 20.1.1.2 24
+
+ospf
+area 0
+network 20.1.1.2 0.0.0.0
+
+local-user lightyears class manage
+password simple paSSw0rd
+service-type telnet
+
+telnet server enable
+line vty 0 63
+authentication-mode scheme
+```
+
+完成上面的配置后就可以使用在 PC1 使用 `ping` 和 `telnet` 指令来验证配置是否正确了。
+
+``` shell
+# PC1
+sys
+sysname PC1
+
+int ge 0/0
+ip addr dhcp-alloc
+
+[Ctrl + Z]
+ping 20.1.1.2
+telnet 20.1.1.2
+```
+
+实验还是基础性的实验，只是 H3C 的手册有点坑。
+
+虽然手册的说法是路由器的 DHCP 服务是默认开启的，但 dhcpserver 的 `dhcp enable` 这条指令在我的 HCL 模拟器里面是不能省略的。一旦省略这句 enable，DHCP 服务就不会正常工作。
+
+顺带一提，如果运行 DHCP 服务的路由器上的某一个接口使用了 DHCP 地址池上的 IP（例如本实验中的 dhcpserver 的 GE 0/0 接口），那么这时不需要使用 `fdhcp server forbidden-ip` 指令，也不需要在对应地址池下使用 `forbidden-ip` 指令：已经分配给路由器接口的 IP 地址不会分配给其他 DHCP Client。
