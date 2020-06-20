@@ -1,0 +1,90 @@
+---
+layout: post
+title:  "Task 9: Nat"
+date:   2020-06-20 12:00:00 +0800
+categories: [router, nat]
+---
+
+🦌北鹿老师这次让我们做 Nat，家用的路由特性到这里就配置全了。
+
+Nat 有几种方式，但几种方式的原理是相通的。
+
+- Basic NAT 维护一个公网的地址池用于 NAT，不利用端口信息。只有这种方式才能支持所有的 IP 协议。
+- NAPT 维护一个公网的地址池，并且利用端口复用地址进行 NAT。因为利用了端口，所以只支持 TCP、UDP 和 ICMP。
+- Easy IP 直接利用路由器接口下的公网地址，借助端口进行 NAT。
+
+![网络拓扑](https://lightyears1998.github.io/gzhu-networking-course-record/images/task9.png)
+
+配置的过程如下：
+
+``` shell
+# R1
+sys
+sysname R1
+int ge 0/0
+ip addr 10.0.0.2 24
+int ge 0/1
+ip addr 10.0.1.1 24
+ip route-static 0.0.0.0 0 10.0.1.2
+
+# NAT
+sys
+sysname NAT
+int ge 0/1
+ip addr 10.0.1.2 24
+int ge 0/0
+ip addr 200.10.10.1 24
+ip route-static 10.0.0.0 24 10.0.1.1
+ip route-static 200.10.20.2 24 200.10.10.2
+acl basic 2000
+rule 0 permit source 10.0.0.0 0.0.0.255
+
+# R2
+sys
+sysname R2
+int ge 0/0
+ip addr 200.10.10.2 24
+int ge 0/1
+ip addr 200.10.20.1 24
+ip route-static 100.10.10.1 24 200.10.10.1
+
+# R3
+sys
+sysname R3
+int ge 0/1
+ip addr 200.10.20.2 24
+ip route-static 100.10.10.1 24 200.10.20.1
+ip route-static 200.10.10.1 24 200.10.20.1
+```
+
+NAPT 的配置：
+
+``` shell
+[在 NAT 路由器上]
+nat address-group 1
+address 100.10.10.1 100.10.10.10
+int ge 0/0
+nat outbound 2000 address-group 1
+[Ctrl + Z]
+terminal monitor
+terminal debugging
+debugging nat packet
+[在 PC 上 ping R3]
+```
+
+Easy IP 的配置：
+
+``` shell
+[在 NAT 路由器上]
+sys
+int ge 0/0
+undo nat outbound 2000
+undo nat address-group 1
+int ge 0/0
+nat outbound 2000
+[Ctrl + Z]
+terminal monitor
+terminal debugging
+debugging nat packet
+[在 PC 上 ping R3]
+```
